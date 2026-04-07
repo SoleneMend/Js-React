@@ -1,24 +1,46 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import "./App.css";
 
+const sampleEmployee = {
+  name: {
+    first: "",
+    last: "",
+  },
+  email: "",
+  picture: {
+    medium: "",
+  },
+};
+
 function App() {
-  const [count, setCount] = useState(0);
+  const [employee, setEmployee] = useState(sampleEmployee);
+
+  const getEmployee = () => {
+    fetch("http://localhost:3310/api/employees")
+      .then((response) => response.json())
+      .then((data) => {
+        console.log(data);
+        setEmployee(data.results[0]);
+      });
+  };
+
+  useEffect(getEmployee, []);
 
   return (
-    <>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button type="button" onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
+    <div className="App">
+      <figure className="DisplayEmployee">
+      <img src={employee.picture.medium} alt={employee.name.first} />
+      <figcaption>
+        <strong>
+          {employee.name.first} {employee.name.last}
+        </strong>
+        {employee.email}
+      </figcaption>
+    </figure>
+      <button type="button" onClick={getEmployee}>
+        Get employee
+      </button>
+    </div>
   );
 }
 
